@@ -12,9 +12,10 @@ app.use(bodyParser.json());
 
 // Ruta para manejar el envío de correos
 app.post("/send-email", async (req, res) => {
-  const { name, email, message } = req.body;
+  const { name, lastname, email, telephone, message } = req.body;
 
-  if (!name || !email || !message) {
+  // Verifica si todos los campos están presentes
+  if (!name || !lastname || !email || !telephone || !message) {
     return res
       .status(400)
       .json({ error: "Todos los campos son obligatorios." });
@@ -32,10 +33,16 @@ app.post("/send-email", async (req, res) => {
 
     // Configura los detalles del correo
     const mailOptions = {
-      from: `"Formulario de Contacto" <${email}>`,
+      from: `${name} <${email}>`, // Aquí el correo del formulario será el remitente
       to: "solutionscodeland@gmail.com", // A dónde quieres recibir los correos
-      subject: `Nuevo mensaje de ${name}`,
-      text: message,
+      subject: `Nuevo mensaje de ${name} ${lastname}`,
+      text: `
+        Nombre: ${name}
+        Apellido: ${lastname}
+        Correo: ${email}
+        Teléfono: ${telephone}
+        Mensaje: ${message}
+      `,
     };
 
     // Envía el correo
